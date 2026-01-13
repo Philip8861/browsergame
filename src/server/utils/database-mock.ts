@@ -216,7 +216,7 @@ export async function query(text: string, params?: unknown[]): Promise<any> {
       const wheatMatch = text.match(/wheat\s*=\s*\$\d+/i);
       
       // Extrahiere Parameter-Index aus Matches (1-basiert zu 0-basiert)
-      const getParamIndex = (match) => {
+      const getParamIndex = (match: RegExpMatchArray | null) => {
         if (!match) return -1;
         const numMatch = match[0].match(/\$(\d+)/);
         return numMatch ? parseInt(numMatch[1], 10) - 1 : -1;

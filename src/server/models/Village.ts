@@ -412,7 +412,7 @@ export class VillageModel {
   /**
    * Berechne Upgrade-Zeit basierend auf Gebäudetyp und Level
    */
-  private static calculateUpgradeTime(buildingType: string, currentLevel: number): number {
+  private static calculateUpgradeTime(_buildingType: string, currentLevel: number): number {
     // Basis-Zeit in Sekunden (vereinfacht)
     const baseTime = 60; // 1 Minute
     return baseTime * (currentLevel + 1);

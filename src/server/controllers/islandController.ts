@@ -19,7 +19,7 @@ export const getIslands = async (req: Request, res: Response): Promise<void> => 
     const islands = Array.isArray(result) ? result : result.rows || [];
     
     res.json({
-      islands: islands.map(island => ({
+      islands: islands.map((island: any) => ({
         id: island.id,
         villageId: island.id,
         x: island.x,
@@ -69,18 +69,50 @@ export const placeIsland = async (req: AuthRequest, res: Response): Promise<void
     );
     const allIslands = Array.isArray(allIslandsResult) ? allIslandsResult : allIslandsResult.rows || [];
     
-    // Berechne nächste freie Position im Kreis
+    // Berechne nächste freie Position im Kreis von der Mitte weg
     const fieldsX = 100;
     const fieldsY = 100;
-    const position = findNextIslandPosition(
-      allIslands.map((island: any) => ({ x: island.x, y: island.y })),
-      fieldsX,
-      fieldsY
-    );
+    const worldCenterX = Math.floor(fieldsX / 2);
+    const worldCenterY = Math.floor(fieldsY / 2);
+    const minDistance = 3;
     
-    if (!position) {
-      res.status(500).json({ error: 'Keine freie Position für neue Insel gefunden' });
-      return;
+    let position = { x: worldCenterX, y: worldCenterY };
+    if (allIslands.length > 0) {
+      // Suche im Kreis von der Mitte weg
+      let radius = minDistance;
+      const maxRadius = Math.max(fieldsX, fieldsY);
+      let found = false;
+      
+      while (radius <= maxRadius && !found) {
+        for (let angle = 0; angle < 360; angle += 15) {
+          const rad = (angle * Math.PI) / 180;
+          const x = Math.round(worldCenterX + radius * Math.cos(rad));
+          const y = Math.round(worldCenterY + radius * Math.sin(rad));
+          
+          if (x >= 0 && x < fieldsX && y >= 0 && y < fieldsY) {
+            let isValid = true;
+            for (const island of allIslands) {
+              const distance = Math.abs(island.x - x) + Math.abs(island.y - y);
+              if (distance < minDistance) {
+                isValid = false;
+                break;
+              }
+            }
+            
+            if (isValid) {
+              position = { x, y };
+              found = true;
+              break;
+            }
+          }
+        }
+        radius++;
+      }
+      
+      if (!found) {
+        res.status(500).json({ error: 'Keine freie Position für neue Insel gefunden' });
+        return;
+      }
     }
     
     // Hole Benutzername

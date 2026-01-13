@@ -237,7 +237,6 @@ export async function query(text: string, params?: unknown[]): Promise<any> {
  * Verwendet better-sqlite3 Transaktionen für atomare Operationen
  */
 class TransactionClient {
-  private queries: Array<{ text: string; params?: unknown[] }> = [];
   private results: Array<any> = [];
   private committed = false;
   private rolledBack = false;

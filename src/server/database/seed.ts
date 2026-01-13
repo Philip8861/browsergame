@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { query } from '../utils/database';
 import { UserModel } from '../models/User';
 import { VillageModel } from '../models/Village';
 

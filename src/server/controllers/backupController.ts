@@ -18,7 +18,7 @@ try {
  * @route   POST /api/backup/create
  * @access  Public (kann später auf Admin beschränkt werden)
  */
-export async function createBackup(req: Request, res: Response): Promise<void> {
+export async function createBackup(_req: Request, res: Response): Promise<void> {
   try {
     // Prüfe ob archiver verfügbar ist
     if (!archiver) {
@@ -83,7 +83,7 @@ export async function createBackup(req: Request, res: Response): Promise<void> {
         resolve();
       });
 
-      archive.on('error', (err) => {
+      archive.on('error', (err: Error) => {
         reject(err);
       });
     });

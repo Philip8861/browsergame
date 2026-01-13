@@ -86,7 +86,7 @@ function handleMessage(
  */
 export function broadcastToVillage(
   wss: WebSocketServer,
-  villageId: number,
+  _villageId: number,
   message: any
 ): void {
   wss.clients.forEach((client) => {

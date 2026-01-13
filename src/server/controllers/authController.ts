@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { VillageModel } from '../models/Village';
 import { logger } from '../utils/logger';
