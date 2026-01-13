@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   root: 'src/client',
@@ -7,16 +6,7 @@ export default defineConfig({
     outDir: '../../dist/client',
     emptyOutDir: true,
   },
-  plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'assets/**/*',
-          dest: 'assets',
-        },
-      ],
-    }),
-  ],
+  publicDir: 'public',
   server: {
     port: 3000,
     host: '0.0.0.0', // Höre auf allen Interfaces (IPv4 und IPv6)
