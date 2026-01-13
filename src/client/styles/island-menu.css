@@ -1,0 +1,245 @@
+/* Dschungel-Insel Menüleiste - Modern mit Glassmorphism */
+
+.island-menu-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 100;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.island-menu-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.menu-bar-container {
+  display: flex;
+  gap: 8px;
+  max-width: 1400px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Menü-Item - Modern mit Glassmorphism */
+.menu-item-island {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
+  min-width: 90px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Kalam', cursive;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item-island::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.menu-item-island:hover::before {
+  left: 100%;
+}
+
+.menu-item-island:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.menu-item-island:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.menu-item-island.active {
+  background: rgba(255, 215, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 
+    0 4px 16px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.menu-item-island:hover .menu-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.menu-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: color 0.3s ease;
+}
+
+.menu-item-island.active .menu-text {
+  color: #ffd700;
+  text-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+/* Entferne alte Dschungel-Dekorationen für modernen Look */
+
+/* Gast-Button im Login */
+.btn-guest-island {
+  padding: 10px 20px;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      #e8d5b7 0px,
+      #e8d5b7 2px,
+      #d4c0a0 2px,
+      #d4c0a0 4px
+    ),
+    linear-gradient(135deg, #f4e8d0 0%, #e8d5b7 100%);
+  border: 3px solid #8b6f47;
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Kalam', cursive;
+  font-size: 0.9rem;
+  color: #6b5435;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-guest-island:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 3px 6px rgba(0, 0, 0, 0.3);
+  border-color: #6b5435;
+}
+
+.btn-guest-island:active {
+  transform: translateY(0);
+}
+
+/* Anpassung für Game-Header (Platz für Menüleiste) */
+.game-header {
+  margin-top: 70px; /* Platz für Menüleiste */
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .menu-bar-container {
+    gap: 6px;
+  }
+  
+  .menu-item-island {
+    min-width: 80px;
+    padding: 6px 12px;
+  }
+  
+  .menu-text {
+    font-size: 0.7rem;
+  }
+  
+  .menu-icon {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .island-menu-bar {
+    height: auto;
+    padding: 8px 10px;
+  }
+  
+  .menu-bar-container {
+    gap: 4px;
+  }
+  
+  .menu-item-island {
+    min-width: 70px;
+    padding: 6px 10px;
+  }
+  
+  .menu-text {
+    font-size: 0.65rem;
+  }
+  
+  .menu-icon {
+    font-size: 1.2rem;
+  }
+  
+  .game-header {
+    margin-top: 100px; /* Mehr Platz bei kleineren Screens */
+  }
+}
+
+
+
+

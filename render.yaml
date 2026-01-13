@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: browsergame-backend
+    env: node
+    buildCommand: npm install && npm run build:server
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: browsergame-db
+    databaseName: browsergame_db
+    user: browsergame_user
+    plan: free
+
+
+
+

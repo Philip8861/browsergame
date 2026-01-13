@@ -1,0 +1,28 @@
+{
+  "migrations": [
+    {
+      "name": "create_users_table",
+      "path": "./src/server/database/migrations/001_create_users_table.ts"
+    },
+    {
+      "name": "create_villages_table",
+      "path": "./src/server/database/migrations/002_create_villages_table.ts"
+    },
+    {
+      "name": "create_resources_table",
+      "path": "./src/server/database/migrations/003_create_resources_table.ts"
+    },
+    {
+      "name": "create_buildings_table",
+      "path": "./src/server/database/migrations/004_create_buildings_table.ts"
+    },
+    {
+      "name": "update_resources_to_new_system",
+      "path": "./src/server/database/migrations/005_update_resources_to_new_system.ts"
+    }
+  ]
+}
+
+
+
+

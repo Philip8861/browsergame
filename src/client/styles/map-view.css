@@ -1,0 +1,523 @@
+/* Island Escape - Neue Karten-Ansicht */
+
+/* Haupt-Container - Pop-up Modal */
+.map-view-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 6000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Verstecke Karte standardmäßig */
+.map-view-container.hidden {
+  display: none !important;
+}
+
+/* Dunkles Overlay im Hintergrund */
+.map-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 1 !important;
+}
+
+/* Pop-up Wrapper - zentriert die Karte */
+.map-popup-wrapper {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  animation: mapPopupFadeIn 0.3s ease-out;
+  width: 750px !important;
+  height: 750px !important;
+  pointer-events: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@keyframes mapPopupFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Zentrierter Canvas-Viewport */
+.map-viewport {
+  display: block !important;
+  width: 750px !important;
+  height: 750px !important;
+  min-width: 750px !important;
+  min-height: 750px !important;
+  max-width: 750px !important;
+  max-height: 750px !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  
+  /* Canvas-spezifische Rendering-Eigenschaften */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  
+  /* Schatten für Tiefe */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+  
+  /* Stelle sicher, dass Zoom nicht die Karte beeinflusst */
+  transform: none !important;
+  zoom: 1 !important;
+  margin: 0 !important;
+}
+
+/* Karten-Container (Kompass entfernt) */
+.map-content-container {
+  position: relative !important;
+  width: 750px !important;
+  height: 750px !important;
+  background: #2a4a3a !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+  
+  /* Stelle sicher, dass Zoom nicht die Karte beeinflusst */
+  transform: none !important;
+  zoom: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Kompass-Animation entfernt */
+
+/* Koordinaten-Anzeige */
+.map-coordinates {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  z-index: 100;
+  font-family: 'Kalam', cursive;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.map-coordinates.hidden {
+  display: none;
+}
+
+#map-coords-text {
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Zoom-Controls */
+.zoom-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  font-family: 'Kalam', cursive;
+}
+
+.zoom-btn {
+  width: 35px;
+  height: 35px;
+  border: 2px solid #6b5435;
+  background: #d4a574;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:hover {
+  background: #c19a65;
+  transform: scale(1.1);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+.zoom-level-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  font-size: 12px;
+  color: #333;
+}
+
+.zoom-level-display span {
+  line-height: 1.2;
+}
+
+/* Temporärer Test-Button für Spieler-Platzierung */
+.place-player-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  border: 3px solid #654321;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: #ffd700;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.place-player-btn:hover {
+  background: linear-gradient(135deg, #a0522d 0%, #cd853f 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.place-player-btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Insel-Info-Panel (Tooltip) */
+/* Insel-Info-Panel - Modernes Glasmorphism Design */
+.island-info-panel {
+  position: fixed;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.45) 100%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 0;
+  width: 300px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  pointer-events: auto;
+  animation: islandInfoFadeIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.island-info-panel.hidden {
+  display: none;
+}
+
+@keyframes islandInfoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+.island-info-content {
+  padding: 20px;
+}
+
+.island-info-field-number {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.island-info-name {
+  margin: 0 0 8px 0;
+  font-size: 22.5px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  word-break: break-word;
+  padding-right: 35px;
+}
+
+.island-info-player {
+  margin: 0 0 17.5px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.island-info-player::before {
+  content: '👤';
+  font-size: 12.5px;
+}
+
+.island-info-points {
+  margin: 0 0 17.5px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fbbf24;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.island-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.island-info-row:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.island-info-label {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+.island-info-value {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+/* Kompass-CSS entfernt - nicht mehr benötigt */
+
+.island-info-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 7.5px;
+  margin: 0 0 15px 0;
+}
+
+.island-action-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(248, 250, 252, 0.7) 100%);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  border-radius: 12.5px;
+  padding: 10px 15px;
+  color: #475569;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.island-action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.island-action-btn:hover::before {
+  left: 100%;
+}
+
+.island-action-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%);
+  color: #1e293b;
+  transform: translateX(3px) translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(203, 213, 225, 1);
+}
+
+.island-action-btn:active {
+  transform: translateX(2px) translateY(0);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.island-action-conquer {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.95) 100%);
+  color: #92400e;
+  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 
+    0 1px 3px rgba(245, 158, 11, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.island-action-conquer:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 1) 0%, rgba(217, 119, 6, 1) 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 4px 12px rgba(245, 158, 11, 0.4),
+    0 2px 6px rgba(217, 119, 6, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(217, 119, 6, 0.5);
+}
+
+.island-action-enter {
+  background: linear-gradient(135deg, rgba(219, 234, 254, 0.95) 0%, rgba(191, 219, 254, 0.95) 100%);
+  color: #1e40af;
+  border-color: rgba(59, 130, 246, 0.3);
+  font-weight: 700;
+  box-shadow: 
+    0 1px 3px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.island-action-enter:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.4),
+    0 2px 6px rgba(37, 99, 235, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(37, 99, 235, 0.5);
+}
+
+.island-info-note {
+  margin-top: 0;
+  padding-top: 15px;
+  border-top: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.island-note-textarea {
+  width: 100%;
+  min-height: 75px;
+  max-height: 125px;
+  padding: 10px 12.5px;
+  border: 1.5px solid rgba(226, 232, 240, 0.6);
+  border-radius: 12.5px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 13.75px;
+  color: #1e293b;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.5;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.island-note-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 
+    0 0 0 3px rgba(102, 126, 234, 0.1),
+    0 2px 4px rgba(102, 126, 234, 0.1),
+    inset 0 1px 2px rgba(0, 0, 0, 0.02);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.island-note-textarea::placeholder {
+  color: #cbd5e1;
+  font-size: 13.75px;
+}
+
+/* Responsive - Viewport passt sich Zoom-Level an */
+@media (max-width: 1024px) {
+  .map-viewport {
+    width: 750px !important;
+    height: 750px !important;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-viewport {
+    width: 750px !important;
+    height: 750px !important;
+    max-width: 90vw;
+    max-height: 90vh;
+    /* Falls Bildschirm zu klein, skaliere runter aber behalte Seitenverhältnis */
+    transform: scale(0.8) !important;
+    transform-origin: center !important;
+  }
+}

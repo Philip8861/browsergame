@@ -1,0 +1,996 @@
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #7b68ee;
+  --success-color: #50c878;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --bg-dark: #1a1a2e;
+  --bg-darker: #16213e;
+  --bg-light: #2a2a3e;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-color: #3a3a4e;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Login Background - Tropischer Strand - Für Login-Bereich */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/login-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Startseite Hintergrund - Für Spiel-Bereich */
+body.game-active::before {
+  background-image: url('/assets/Startseite_Insel.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition: background-size 0.1s ease-out, background-position 0.1s ease-out;
+}
+
+/* Login-Hintergrund bleibt aktiv wenn login-active Klasse gesetzt ist */
+body.login-active::before {
+  background-image: url('/assets/login-background.png');
+  opacity: 1;
+}
+
+/* Fallback: CSS-Gradient für tropischen Strand (wenn Bild nicht geladen) */
+body {
+  background: linear-gradient(
+    180deg,
+    #87CEEB 0%,
+    #87CEEB 30%,
+    #40E0D0 30%,
+    #40E0D0 50%,
+    #FFD700 50%,
+    #FFD700 70%,
+    #228B22 70%,
+    #228B22 100%
+  );
+  background-size: 100% 100%;
+}
+
+/* Login Background - Tropischer Strand (für Login-Modal) */
+body.login-background::before {
+  z-index: -1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Leichterer Overlay für bessere Sichtbarkeit des Hintergrunds */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+  backdrop-filter: blur(1px); /* Leichter Blur-Effekt */
+}
+
+.modal-content {
+  background: rgba(42, 42, 62, 0.95); /* Leicht transparent für besseren Look */
+  padding: 2rem;
+  border-radius: 10px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px); /* Blur-Effekt für Glassmorphism */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Auth Modal */
+.auth-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--bg-darker);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.tab-button:hover {
+  background: var(--bg-dark);
+}
+
+.tab-button.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-darker);
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.error-message {
+  color: var(--danger-color);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  min-height: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #357abd;
+}
+
+.btn-secondary {
+  background: var(--bg-darker);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-dark);
+}
+
+/* Island Conquered Modal */
+.island-conquered-modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(220, 53, 69, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.island-conquered-header h2 {
+  color: #dc3545;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.island-conquered-body {
+  margin: 1.5rem 0;
+  color: #333;
+}
+
+.island-conquered-body p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.island-conquered-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.island-conquered-actions .btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.island-conquered-actions .btn-primary {
+  background: #28a745;
+  color: white;
+  border: none;
+}
+
+.island-conquered-actions .btn-primary:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.island-conquered-actions .btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+}
+
+.island-conquered-actions .btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Game Container */
+#game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header - Modern mit Glassmorphism */
+.game-header {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 10;
+}
+
+.game-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.resources-bar {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resource-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.resource-item:hover::before {
+  left: 100%;
+}
+
+.resource-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.resource-icon {
+  font-size: 1.75rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.resource-item:hover .resource-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.resource-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resource-value {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #ffd700;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(255, 215, 0, 0.3);
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  text-align: right;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.user-info span {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info .btn-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-primary);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Main Game Area */
+.game-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background: transparent;
+}
+
+/* Verstecke alte Ansicht standardmäßig */
+#old-game-view {
+  display: none;
+}
+
+#old-game-view:not(.hidden) {
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  background: var(--bg-light);
+  padding: 1.5rem;
+  border-right: 2px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.village-info {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.village-info h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.buildings-list h4 {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.building-item {
+  background: var(--bg-darker);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.building-item:hover {
+  background: var(--bg-dark);
+  border-color: var(--primary-color);
+}
+
+.building-item.upgrading {
+  border-color: var(--warning-color);
+}
+
+.building-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.building-name {
+  font-weight: bold;
+}
+
+.building-level {
+  color: var(--primary-color);
+}
+
+.building-timer {
+  font-size: 0.85rem;
+  color: var(--warning-color);
+  margin-top: 0.5rem;
+}
+
+/* Game View */
+.game-view {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-dark);
+  position: relative;
+}
+
+#phaser-game {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Building Modal */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .game-main {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-height: 200px;
+  }
+  
+  .resources-bar {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+
+/* Sonnenuhr Modal */
+/* Ausbau-Modal */
+.upgrade-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upgrade-modal.hidden {
+  display: none;
+}
+
+.upgrade-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.upgrade-content {
+  position: relative;
+  background: transparent;
+  padding: 0;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: visible;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.upgrade-title {
+  font-family: 'Tropical Island', 'Pacifico', cursive;
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 10002;
+}
+
+.upgrade-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.upgrade-info-panel {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.upgrade-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upgrade-info-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.upgrade-info-value {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+}
+
+.upgrade-build-btn {
+  margin-top: 1rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, rgba(100, 150, 200, 0.8), rgba(80, 120, 180, 0.8));
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-build-btn:hover {
+  background: linear-gradient(135deg, rgba(120, 170, 220, 0.9), rgba(100, 140, 200, 0.9));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-build-btn:active {
+  transform: translateY(0);
+}
+
+.upgrade-build-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.upgrade-message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.upgrade-message.hidden {
+  display: none;
+}
+
+.upgrade-message.error {
+  background: rgba(220, 53, 69, 0.9);
+  color: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-message.success {
+  background: rgba(40, 167, 69, 0.9);
+  color: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10002;
+}
+
+.upgrade-close:hover {
+  background: rgba(255, 100, 100, 0.8);
+  border-color: rgba(255, 100, 100, 1);
+  transform: scale(1.1);
+}
+
+.upgrade-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.upgrade-image {
+  max-width: 63vw;
+  max-height: 63vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive für Ausbau-Modal */
+@media (max-width: 1024px) {
+  .upgrade-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .upgrade-info-panel {
+    min-width: auto;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .upgrade-image {
+    max-width: 80vw;
+    max-height: 50vh;
+  }
+  
+  .upgrade-title {
+    font-size: 2rem;
+  }
+}
+
+.sundial-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sundialFadeIn 0.3s ease-out;
+}
+
+.sundial-modal.hidden {
+  display: none;
+}
+
+@keyframes sundialFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dunkler, unscharfer Hintergrund */
+.sundial-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 1;
+}
+
+/* Content Container */
+.sundial-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+/* Schließen Button */
+.sundial-close {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sundial-close:hover {
+  background: rgba(255, 100, 100, 0.5);
+  border-color: rgba(255, 100, 100, 0.7);
+  transform: scale(1.1) rotate(90deg);
+  color: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 20px rgba(255, 100, 100, 0.4);
+}
+
+/* Bild Container */
+.sundial-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sonnenuhr Bild mit Leuchten */
+.sundial-image {
+  max-width: 600px;
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)) 
+          drop-shadow(0 0 40px rgba(255, 200, 0, 0.4))
+          drop-shadow(0 0 60px rgba(255, 180, 0, 0.2));
+  animation: sundialGlow 2s ease-in-out infinite alternate;
+  border-radius: 12px;
+}
+
+@keyframes sundialGlow {
+  from {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)) 
+            drop-shadow(0 0 30px rgba(255, 200, 0, 0.3))
+            drop-shadow(0 0 45px rgba(255, 180, 0, 0.15));
+  }
+  to {
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)) 
+            drop-shadow(0 0 50px rgba(255, 200, 0, 0.5))
+            drop-shadow(0 0 75px rgba(255, 180, 0, 0.3));
+  }
+}
+
+/* Uhr Container - Kein Hintergrund */
+.sundial-clock-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.sundial-clock {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 1);
+  text-shadow: 
+    0 0 1.5px rgba(255, 255, 255, 0.15),
+    0 0 3px rgba(255, 255, 255, 0.075),
+    /* Ranken-Effekte - verwachsene Schatten */
+    1px 2px 0 rgba(0, 0, 0, 0.3),
+    -1px 1px 0 rgba(0, 0, 0, 0.25),
+    2px -1px 1px rgba(0, 0, 0, 0.2),
+    -2px 2px 1px rgba(0, 0, 0, 0.2),
+    3px 1px 2px rgba(0, 0, 0, 0.15),
+    -1px 3px 2px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+  filter: contrast(1.1) brightness(1.05);
+  transform: rotate(-0.3deg);
+}
+
+/* Verwachsene Ranken-Effekte mit Pseudo-Elementen */
+.sundial-clock::before {
+  content: attr(data-time);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(120, 160, 100, 0.25);
+  text-shadow: 
+    1px 2px 0 rgba(80, 120, 60, 0.2),
+    -1px 1px 0 rgba(80, 120, 60, 0.2),
+    2px -1px 1px rgba(80, 120, 60, 0.15),
+    -2px 2px 1px rgba(80, 120, 60, 0.15);
+  z-index: -1;
+  transform: translate(0.5px, 0.5px) rotate(0.3deg);
+  filter: blur(0.3px);
+  pointer-events: none;
+}
+
+.sundial-clock::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  background: 
+    radial-gradient(ellipse at 15% 25%, rgba(100, 140, 80, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 75%, rgba(100, 140, 80, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(100, 140, 80, 0.04) 0%, transparent 60%),
+    linear-gradient(45deg, transparent 48%, rgba(100, 140, 80, 0.03) 49%, rgba(100, 140, 80, 0.03) 51%, transparent 52%);
+  z-index: -2;
+  filter: blur(1.5px);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.clock-time {
+  display: inline-block;
+  min-width: 140px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sundial-image {
+    max-width: 90vw;
+    max-height: 50vh;
+  }
+
+  .sundial-clock {
+    font-size: 2.5rem;
+  }
+
+  .sundial-close {
+    top: -2.5rem;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+}
+

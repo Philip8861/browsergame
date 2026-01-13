@@ -1,0 +1,198 @@
+/* Gebäude-Sektion - Modern mit Glassmorphism */
+
+.buildings-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+.buildings-section-modern {
+  position: relative;
+  z-index: 1;
+}
+
+.buildings-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.buildings-title {
+  font-family: 'Caveat', cursive;
+  font-size: 2.5rem;
+  color: #ffd700;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(255, 215, 0, 0.3);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.buildings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+/* Gebäude-Karte */
+.building-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 200px;
+}
+
+.building-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.building-card:hover::before {
+  left: 100%;
+}
+
+.building-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 0 30px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.building-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.building-card:hover .building-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.building-name {
+  font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.building-level {
+  font-size: 0.9rem;
+  color: #ffd700;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Pop-Up Modal - Wird neu aufgebaut */
+.building-popup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5000;
+  display: none;
+}
+
+.building-popup-modal.hidden {
+  display: none;
+}
+
+/* Debug: Ressourcen-Panel */
+.debug-resources-panel {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
+  padding: 1rem;
+  background: rgba(30, 30, 40, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 2px solid rgba(100, 100, 120, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-add-resource {
+  padding: 0.75rem 1.5rem;
+  background: rgba(100, 150, 200, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(100, 150, 200, 0.5);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Kalam', cursive;
+}
+
+.btn-add-resource:hover {
+  background: rgba(100, 150, 200, 0.5);
+  border-color: rgba(100, 150, 200, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 150, 200, 0.3);
+}
+
+.btn-building-action:hover {
+  background: rgba(120, 120, 140, 0.4);
+  border-color: rgba(140, 140, 160, 0.6);
+  color: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(100, 100, 120, 0.3);
+}
+
+.btn-building-action:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buildings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+}
+

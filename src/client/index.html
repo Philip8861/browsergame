@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategiespiel - Browserbasiertes Strategiespiel</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/login-island.css">
+  <link rel="stylesheet" href="/styles/login-modern.css">
+  <link rel="stylesheet" href="/styles/island-menu.css">
+  <link rel="stylesheet" href="/styles/map-view.css">
+  <link rel="stylesheet" href="/styles/buildings.css">
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="/styles/notification.css">
+</head>
+<body>
+  <!-- Login/Registrierung Modal -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content login-island-container">
+      <div class="login-form-container">
+        <h1 class="login-title-modern">Island Escape</h1>
+        
+        <div class="auth-tabs-modern">
+          <button class="tab-button-modern active" data-tab="login">Anmelden</button>
+          <button class="tab-button-modern" data-tab="register">Registrieren</button>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form active">
+          <div class="form-group">
+            <label for="login-username" class="form-label-modern">Benutzername</label>
+            <input type="text" id="login-username" class="form-input-modern" placeholder="Benutzername eingeben" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="login-password" class="form-label-modern">Passwort</label>
+            <input type="password" id="login-password" class="form-input-modern" placeholder="Passwort eingeben" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn-login-modern">
+            Anmelden
+          </button>
+          <div id="login-error" class="error-message-modern"></div>
+          <div class="auth-footer">
+            <button type="button" class="btn-link" id="switch-to-register-btn">Noch kein Account? Registrieren</button>
+          </div>
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
+            <button type="button" id="backup-btn" class="btn-backup" style="width: 100%; padding: 10px; background: #4a90e2; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+              💾 Projekt-Backup erstellen
+            </button>
+            <div id="backup-status" style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;"></div>
+          </div>
+        </form>
+        
+        <!-- Registrierung Form -->
+        <form id="register-form" class="auth-form">
+          <div class="form-group">
+            <label for="register-username" class="form-label-modern">Benutzername</label>
+            <input type="text" id="register-username" class="form-input-modern" placeholder="Benutzername eingeben" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="register-email" class="form-label-modern">E-Mail</label>
+            <input type="email" id="register-email" class="form-input-modern" placeholder="E-Mail eingeben" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="register-password" class="form-label-modern">Passwort</label>
+            <input type="password" id="register-password" class="form-input-modern" placeholder="Passwort eingeben (min. 6 Zeichen)" required minlength="6" autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn-login-modern">
+            Registrieren
+          </button>
+          <div id="register-error" class="error-message-modern"></div>
+          <div class="auth-footer">
+            <button type="button" class="btn-link" id="switch-to-login-btn">Bereits registriert? Anmelden</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hauptansicht -->
+  <div id="game-container" class="hidden">
+    <!-- Altes Menü (versteckt) -->
+    <nav class="island-menu-bar hidden">
+      <div class="menu-bar-container">
+        <button class="menu-item-island" data-menu="island">
+          <span class="menu-icon">🏝️</span>
+          <span class="menu-text">Insel</span>
+        </button>
+        <button class="menu-item-island" data-menu="islands-overview">
+          <span class="menu-icon">🏖️</span>
+          <span class="menu-text">Inseln</span>
+        </button>
+        <button class="menu-item-island" data-menu="map">
+          <span class="menu-icon">🗺️</span>
+          <span class="menu-text">Karte</span>
+        </button>
+        <button class="menu-item-island" data-menu="forum">
+          <span class="menu-icon">🌺</span>
+          <span class="menu-text">Forum</span>
+        </button>
+        <button class="menu-item-island" data-menu="friends">
+          <span class="menu-icon">🤝</span>
+          <span class="menu-text">Freunde</span>
+        </button>
+        <button class="menu-item-island" data-menu="reports">
+          <span class="menu-icon">📜</span>
+          <span class="menu-text">Berichte</span>
+        </button>
+        <button class="menu-item-island" data-menu="community">
+          <span class="menu-icon">🌴</span>
+          <span class="menu-text">Gemeinschaft</span>
+        </button>
+        <button class="menu-item-island" data-menu="leaderboard">
+          <span class="menu-icon">🏅</span>
+          <span class="menu-text">Rangliste</span>
+        </button>
+        <button class="menu-item-island" data-menu="settings">
+          <span class="menu-icon">⚓</span>
+          <span class="menu-text">Einstellung</span>
+        </button>
+      </div>
+    </nav>
+    
+    <!-- Alter Header (versteckt) -->
+    <header class="game-header hidden">
+      <div class="resources-bar">
+        <div class="resource-item">
+          <span class="resource-icon">🪵</span>
+          <span class="resource-label">Holz:</span>
+          <span id="resource-wood-old" class="resource-value">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-icon">🧱</span>
+          <span class="resource-label">Lehm:</span>
+          <span id="resource-clay-old" class="resource-value">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-icon">⚙️</span>
+          <span class="resource-label">Eisen:</span>
+          <span id="resource-iron-old" class="resource-value">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-icon">🌾</span>
+          <span class="resource-label">Getreide:</span>
+          <span id="resource-wheat-old" class="resource-value">0</span>
+        </div>
+      </div>
+      <div class="user-info">
+        <span id="username-display-old"></span>
+        <button id="logout-btn-old" class="btn btn-secondary">Abmelden</button>
+      </div>
+    </header>
+
+    <!-- Hauptbereich - Modern Dashboard -->
+    <main class="game-main">
+      <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">Navigation</h3>
+            <!-- Mauskoordinaten-Anzeige -->
+            <div class="mouse-coordinates-display">
+              <span id="mouse-coords-text">X: -, Y: -</span>
+            </div>
+            <ul class="sidebar-menu">
+              <li class="sidebar-menu-item active" data-menu="island">
+                <span class="sidebar-menu-icon">🏝️</span>
+                <span>Insel</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="islands-overview">
+                <span class="sidebar-menu-icon">🏖️</span>
+                <span>Inseln Übersicht</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="map">
+                <span class="sidebar-menu-icon">🗺️</span>
+                <span>Karte</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="forum">
+                <span class="sidebar-menu-icon">🌺</span>
+                <span>Forum</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="friends">
+                <span class="sidebar-menu-icon">🤝</span>
+                <span>Freunde</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="reports">
+                <span class="sidebar-menu-icon">📜</span>
+                <span>Berichte</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="community">
+                <span class="sidebar-menu-icon">🌴</span>
+                <span>Gemeinschaft</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="leaderboard">
+                <span class="sidebar-menu-icon">🏅</span>
+                <span>Rangliste</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="settings">
+                <span class="sidebar-menu-icon">⚓</span>
+                <span>Einstellungen</span>
+              </li>
+              <li class="sidebar-menu-item" data-menu="upgrades">
+                <span class="sidebar-menu-icon">🛠️</span>
+                <span>Ausbauten</span>
+              </li>
+              <li class="sidebar-menu-item" id="sundial-menu-item">
+                <span class="sidebar-menu-icon">☀️</span>
+                <span>Sonnenuhr</span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Island Title -->
+          <div class="island-title-container">
+            <button class="island-nav-arrow island-nav-arrow-left" id="island-nav-left" title="Vorherige Insel">◀</button>
+            <h1 class="island-title" id="island-title">Insel</h1>
+            <button class="island-nav-arrow island-nav-arrow-right" id="island-nav-right" title="Nächste Insel">▶</button>
+          </div>
+          
+          <!-- Resources Display -->
+          <div class="island-resources-display" id="island-resources-display">
+            <div class="resource-display-item resource-display-item-points">
+              <span class="resource-display-icon">⭐</span>
+              <span class="resource-display-label">Punkte:</span>
+              <span class="resource-display-value" id="resource-points">0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">👥</span>
+              <span class="resource-display-label">Bevölkerung:</span>
+              <span class="resource-display-value" id="resource-population">0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">🪵</span>
+              <span class="resource-display-label">Holz:</span>
+              <span class="resource-display-value" id="resource-wood">0</span>
+              <span class="resource-production-rate" id="resource-wood-rate">+0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">🪨</span>
+              <span class="resource-display-label">Stein:</span>
+              <span class="resource-display-value" id="resource-stone">0</span>
+              <span class="resource-production-rate" id="resource-stone-rate">+0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">💧</span>
+              <span class="resource-display-label">Wasser:</span>
+              <span class="resource-display-value" id="resource-water">0</span>
+              <span class="resource-production-rate" id="resource-water-rate">+0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">🍖</span>
+              <span class="resource-display-label">Nahrung:</span>
+              <span class="resource-display-value" id="resource-food">0</span>
+              <span class="resource-production-rate" id="resource-food-rate">+0</span>
+            </div>
+            <div class="resource-display-item">
+              <span class="resource-display-icon">💎</span>
+              <span class="resource-display-label">Luxus:</span>
+              <span class="resource-display-value" id="resource-luxury">0</span>
+              <span class="resource-production-rate" id="resource-luxury-rate">+0</span>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="dashboard-content-wrapper">
+            <div class="dashboard-content">
+              <!-- Animierte Figuren auf der Insel (Startseite) -->
+              <div id="island-people-container" class="island-people-container">
+                <!-- Figuren werden dynamisch basierend auf Bevölkerung erstellt -->
+              </div>
+              
+              <!-- Draggable Lagerfeuer Icon -->
+              <div id="draggable-lagerfeuer" class="draggable-building-icon" draggable="false" style="display: none;">
+                <img src="/assets/Lagerfeuer_icon.png" alt="Lagerfeuer" class="lagerfeuer-icon-image" id="lagerfeuer-icon-img">
+                <div class="lagerfeuer-level-badge" id="lagerfeuer-level-badge">Stufe 1</div>
+              </div>
+              
+              <!-- Draggable Hafen Icon -->
+              <div id="draggable-hafen" class="draggable-building-icon" draggable="false" style="display: none;">
+                <img src="/assets/hafen_icon1.png" alt="Hafen" class="hafen-icon-image" id="hafen-icon-img">
+                <div class="hafen-level-badge" id="hafen-level-badge">Stufe 1</div>
+              </div>
+              
+              <!-- Gebäude-Ansicht -->
+              <div id="buildings-view" class="content-view">
+                <!-- Gebäude-Sektion -->
+                <div id="buildings-section" class="buildings-section-modern">
+                  <div class="buildings-grid-modern">
+                    <!-- Gebäude werden hier angezeigt wenn sie gebaut wurden -->
+                  </div>
+                </div>
+              </div>
+
+            <!-- Inseln Übersicht -->
+            <div id="islands-overview-view" class="content-view hidden">
+              <div class="content-header">
+                <h1 class="content-title">🏖️ Inseln Übersicht</h1>
+                <p class="content-subtitle">Verwalte deine Inseln und wechsle zwischen ihnen</p>
+              </div>
+
+              <div class="islands-overview-section">
+                <div id="islands-list" class="islands-list">
+                  <!-- Inseln werden hier dynamisch geladen -->
+                  <div class="islands-loading">Lade Inseln...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Einstellungen-Ansicht -->
+            <div id="settings-view" class="content-view hidden">
+              <div class="content-header">
+                <h1 class="content-title">⚙️ Einstellungen</h1>
+                <p class="content-subtitle">Verwalte deine Account-Einstellungen</p>
+              </div>
+
+              <div class="settings-section">
+                <div class="settings-card">
+                  <h3>Account</h3>
+                  <div class="settings-item">
+                    <div class="settings-info">
+                      <span class="settings-label">Benutzername</span>
+                      <span class="settings-value" id="settings-username">Spieler</span>
+                    </div>
+                  </div>
+                  <div class="settings-item">
+                    <button id="logout-btn-settings" class="btn btn-danger">Abmelden</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ausbauten-Ansicht -->
+            <div id="upgrades-view" class="content-view hidden">
+              <div class="content-header">
+                <h1 class="content-title">🔨 Ausbauten</h1>
+                <p class="content-subtitle">Baue neue Strukturen und erweitere deine Insel</p>
+              </div>
+
+              <!-- Bauschleife oben -->
+              <div class="build-queue-container">
+                <h2 class="build-queue-title">Bauschleife</h2>
+                <div id="build-queue" class="build-queue">
+                  <div class="build-queue-empty">Keine Ausbauten in der Warteschlange</div>
+                </div>
+              </div>
+
+              <!-- Ausbauten-Grid (wird dynamisch gefüllt) -->
+              <div class="upgrades-grid">
+                <!-- Ausbauten werden hier dynamisch geladen -->
+              </div>
+            </div>
+
+            <!-- Rangliste-Ansicht -->
+            <div id="leaderboard-view" class="content-view hidden">
+              <div class="content-header">
+                <h1 class="content-title">🏅 Rangliste</h1>
+                <p class="content-subtitle">Die besten Spieler der Inselwelt</p>
+              </div>
+
+              <div class="leaderboard-section">
+                <!-- Sortier-Optionen -->
+                <div class="leaderboard-sort">
+                  <label for="leaderboard-sort-select">Sortieren nach:</label>
+                  <select id="leaderboard-sort-select" class="leaderboard-sort-select">
+                    <option value="points">⭐ Punkte</option>
+                    <option value="population">👥 Bevölkerung</option>
+                    <option value="wood">🪵 Holz</option>
+                    <option value="stone">🪨 Stein</option>
+                    <option value="water">💧 Wasser</option>
+                    <option value="food">🍖 Nahrung</option>
+                    <option value="luxury">💎 Luxusgüter</option>
+                    <option value="island_count">🏝️ Anzahl Inseln</option>
+                  </select>
+                </div>
+
+                <!-- Rangliste Tabelle -->
+                <div class="leaderboard-container">
+                  <div id="leaderboard-loading" class="leaderboard-loading">Lade Rangliste...</div>
+                  <table id="leaderboard-table" class="leaderboard-table hidden">
+                    <thead>
+                      <tr>
+                        <th class="leaderboard-rank">Rang</th>
+                        <th class="leaderboard-username">Spieler</th>
+                        <th class="leaderboard-stat">⭐ Punkte</th>
+                        <th class="leaderboard-stat">👥 Bevölkerung</th>
+                        <th class="leaderboard-stat">🪵 Holz</th>
+                        <th class="leaderboard-stat">🪨 Stein</th>
+                        <th class="leaderboard-stat">💧 Wasser</th>
+                        <th class="leaderboard-stat">🍖 Nahrung</th>
+                        <th class="leaderboard-stat">💎 Luxus</th>
+                        <th class="leaderboard-stat">🏝️ Inseln</th>
+                      </tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody">
+                      <!-- Wird dynamisch gefüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Button -->
+      <div class="debug-panel-modern">
+        <button id="add-wood-btn" class="debug-btn">➕ Rohstoffe hinzufügen</button>
+      </div>
+
+      <!-- Alte Gebäude-Sektion (versteckt) -->
+      <div id="buildings-section-old" class="buildings-section hidden">
+        <div class="buildings-container">
+          <h2 class="buildings-title">🏗️ Gebäude</h2>
+          <div class="buildings-grid">
+            <div class="building-card" data-building="hafen">
+              <div class="building-icon">⚓</div>
+              <div class="building-name">Hafen</div>
+              <div class="building-level">Ausbau 1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Karten-Ansicht Container -->
+      <div id="island-map-view" class="map-view-container hidden">
+        <!-- Dunkles Overlay -->
+        <div class="map-overlay"></div>
+        <!-- Pop-up Karte -->
+        <div class="map-popup-wrapper">
+          <!-- Karten-Container -->
+          <div class="map-content-container">
+            <canvas id="map-viewport" class="map-viewport"></canvas>
+            <div class="zoom-controls">
+              <button id="zoom-out-btn" class="zoom-btn" title="Rauszoomen">−</button>
+              <div class="zoom-level-display">
+                <span id="zoom-level-text">Zoom: 1</span>
+                <span id="zoom-fields-text">(16 Felder)</span>
+              </div>
+              <button id="zoom-in-btn" class="zoom-btn" title="Reinzoomen">+</button>
+            </div>
+            <!-- Koordinaten-Anzeige -->
+            <div id="map-coordinates" class="map-coordinates">
+              <span id="map-coords-text">X: -, Y: -</span>
+            </div>
+            <!-- Temporärer Test-Button -->
+            <button id="place-player-btn" class="place-player-btn" title="Spieler plazieren (Test)">🏝️ Spieler plazieren</button>
+              <!-- Insel-Info-Panel (Tooltip) -->
+              <div id="island-info-panel" class="island-info-panel hidden">
+                <div class="island-info-content">
+                  <p id="island-info-field-number" class="island-info-field-number">Feld: -</p>
+                  <h2 id="island-info-name" class="island-info-name">-</h2>
+                  <p id="island-info-player" class="island-info-player">-</p>
+                  <p id="island-info-points" class="island-info-points">⭐ Punkte: 0</p>
+                  <div class="island-info-actions">
+                    <button class="island-action-btn island-action-enter" data-action="enter" title="Insel betreten" style="display: none;">🏝️ Insel betreten</button>
+                    <button class="island-action-btn" data-action="message" title="Nachricht senden">💬 Nachricht</button>
+                    <button class="island-action-btn" data-action="trade" title="Handeln">🤝 Handeln</button>
+                    <button class="island-action-btn" data-action="attack" title="Angreifen" style="display: none;">⚔️ Angreifen</button>
+                    <button class="island-action-btn island-action-conquer" data-action="conquer" title="Insel erobern" style="display: none;">⚔️ Erobern</button>
+                  </div>
+                  <div class="island-info-note">
+                    <textarea id="island-info-note-text" class="island-note-textarea" placeholder="Notiz..."></textarea>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Pop-Up für eroberte Insel -->
+    <!-- Notification Pop-Up Modal -->
+    <div id="notification-modal" class="notification-modal hidden">
+      <div class="notification-content">
+        <div class="notification-icon" id="notification-icon">ℹ️</div>
+        <h3 class="notification-title" id="notification-title">Meldung</h3>
+        <p class="notification-message" id="notification-message"></p>
+        <button id="notification-ok-btn" class="btn btn-primary notification-btn">OK</button>
+      </div>
+    </div>
+
+    <div id="island-conquered-modal" class="modal hidden">
+      <div class="modal-content island-conquered-modal">
+        <div class="island-conquered-header">
+          <h2>⚔️ Deine Insel wurde erobert!</h2>
+        </div>
+        <div class="island-conquered-body">
+          <p>Deine Insel wurde von einem anderen Spieler erobert.</p>
+          <p>Möchtest du neu anfangen?</p>
+        </div>
+        <div class="island-conquered-actions">
+          <button id="restart-island-yes" class="btn btn-primary">Ja, neu anfangen</button>
+          <button id="restart-island-no" class="btn btn-secondary">Nein</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gebäude-Upgrade Modal -->
+    <div id="building-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="building-modal-title">Gebäude-Upgrade</h2>
+        <div id="building-modal-info"></div>
+        <div class="modal-actions">
+          <button id="upgrade-confirm-btn" class="btn btn-primary">Upgrade starten</button>
+          <button id="upgrade-cancel-btn" class="btn btn-secondary">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gebäude-Pop-Up Modal - Wird neu aufgebaut -->
+    <div id="building-popup-modal" class="building-popup-modal hidden">
+      <!-- Pop-up wird hier neu aufgebaut -->
+    </div>
+
+    <!-- Ausbau-Modal -->
+    <div id="upgrade-modal" class="upgrade-modal hidden">
+      <div class="upgrade-backdrop"></div>
+      <div class="upgrade-content">
+        <button class="upgrade-close" id="upgrade-close">×</button>
+        <h2 id="upgrade-title" class="upgrade-title">Lagerfeuer Stufe 1</h2>
+        <div class="upgrade-layout">
+          <div class="upgrade-info-panel">
+            <div class="upgrade-info-item">
+              <span class="upgrade-info-label">⏱️ Zeit:</span>
+              <span class="upgrade-info-value" id="upgrade-time">15 Sekunden</span>
+            </div>
+            <div class="upgrade-info-item">
+              <span class="upgrade-info-label">⭐ Punkte:</span>
+              <span class="upgrade-info-value" id="upgrade-points">10</span>
+            </div>
+            <div class="upgrade-info-item">
+              <span class="upgrade-info-label">🪵 Kosten:</span>
+              <span class="upgrade-info-value" id="upgrade-cost">10 Holz</span>
+            </div>
+            <div class="upgrade-info-item" id="upgrade-requirements" style="display: none;">
+              <span class="upgrade-info-label">📋 Voraussetzungen:</span>
+              <span class="upgrade-info-value" id="upgrade-requirements-value"></span>
+            </div>
+            <div id="upgrade-message" class="upgrade-message hidden"></div>
+            <button id="upgrade-build-btn" class="upgrade-build-btn">🔨 Ausbauen</button>
+          </div>
+          <div class="upgrade-image-container">
+            <img id="upgrade-image" src="" alt="Ausbau" class="upgrade-image">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sonnenuhr Modal -->
+    <div id="sundial-modal" class="sundial-modal hidden">
+      <div class="sundial-backdrop"></div>
+      <div class="sundial-content">
+        <button class="sundial-close" id="sundial-close">×</button>
+        <div class="sundial-image-container">
+          <img src="/assets/Sonnenuhr.png" alt="Sonnenuhr" class="sundial-image">
+        </div>
+        <div class="sundial-clock-container">
+          <div class="sundial-clock" id="sundial-clock">
+            <span class="clock-time" id="clock-time">00:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+  <script type="module" src="/js/notification.js"></script>
+  <script type="module" src="/js/api.js"></script>
+  <script type="module" src="/js/cursor.js"></script>
+  <script type="module" src="/js/auth.js"></script>
+  <script type="module" src="/js/backup.js"></script>
+  <script type="module" src="/js/sundial.js"></script>
+  <script type="module" src="/js/buildings.js"></script>
+  <script type="module" src="/js/resources-debug.js"></script>
+  <script type="module" src="/js/menu.js"></script>
+  <script type="module" src="/js/map-view.js"></script>
+  <script type="module" src="/js/game.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
+
