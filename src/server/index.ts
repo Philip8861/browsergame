@@ -9,6 +9,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 import { migrateResourcesTable } from './utils/migrate-resources';
 import { migrateVillagesTable } from './utils/migrate-villages';
+import { runAutoMigrations } from './utils/auto-migrate';
 
 // Lade Umgebungsvariablen
 dotenv.config();
@@ -18,9 +19,16 @@ dotenv.config();
 setImmediate(async () => {
   try {
     // Warte zusätzlich, damit die Datenbankverbindung bereit ist
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Führe automatische Tabellen-Erstellung aus
+    await runAutoMigrations();
+    
+    // Führe zusätzliche Migrationen aus (für Spalten-Updates)
     await migrateResourcesTable();
     await migrateVillagesTable();
+    
+    logger.info('✅ Alle Migrationen erfolgreich abgeschlossen');
   } catch (error: any) {
     logger.error('❌ Fehler bei automatischer Migration:', error);
     // Server trotzdem starten
