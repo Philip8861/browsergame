@@ -423,18 +423,16 @@ export const cancelUpgrade = async (req: AuthRequest, res: Response): Promise<vo
         return;
       }
 
-      const newWood = (parseFloat(currentResources.wood) || 0) + (refund.wood || 0);
-      const newStone = (parseFloat(currentResources.stone) || 0) + (refund.stone || 0);
-
-      const woodStr = String(newWood);
-      const stoneStr = String(newStone);
-      const villageIdStr = String(villageId);
+      const woodValue = typeof currentResources.wood === 'string' ? parseFloat(currentResources.wood) : (currentResources.wood || 0);
+      const stoneValue = typeof currentResources.stone === 'string' ? parseFloat(currentResources.stone) : (currentResources.stone || 0);
+      const newWood = woodValue + (refund.wood || 0);
+      const newStone = stoneValue + (refund.stone || 0);
 
       await client.query(
         process.env.DB_TYPE === 'sqlite'
           ? 'UPDATE resources SET wood = ?, stone = ?, last_updated = CURRENT_TIMESTAMP WHERE village_id = ?'
           : 'UPDATE resources SET wood = $1, stone = $2, last_updated = NOW() WHERE village_id = $3',
-        [woodStr, stoneStr, villageIdStr]
+        [String(newWood), String(newStone), String(villageId)] as unknown[]
       );
 
       // Prüfe ob der abzubrechende Auftrag der letzte ist (späteste Finish-Zeit)

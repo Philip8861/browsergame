@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { VillageModel } from '../models/Village';
 import { logger } from '../utils/logger';
@@ -106,7 +106,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       throw new Error('JWT_SECRET nicht konfiguriert');
     }
 
-    const expiresIn: string = process.env.JWT_EXPIRES_IN || '7d';
+    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+    // @ts-ignore - expiresIn string wird von jsonwebtoken akzeptiert
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       jwtSecret,
@@ -187,13 +188,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       throw new Error('JWT_SECRET nicht konfiguriert');
     }
 
-    const expiresIn: string = process.env.JWT_EXPIRES_IN || '7d';
+    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
     logger.info('Generiere JWT Token...');
-    const options: SignOptions = { expiresIn };
+    // @ts-ignore - expiresIn string wird von jsonwebtoken akzeptiert
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       jwtSecret,
-      options
+      { expiresIn }
     );
     logger.info('Login erfolgreich:', { userId: user.id, username: user.username });
 
