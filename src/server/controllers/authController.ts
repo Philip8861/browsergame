@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { VillageModel } from '../models/Village';
 import { logger } from '../utils/logger';
@@ -189,10 +189,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const expiresIn: string = process.env.JWT_EXPIRES_IN || '7d';
     logger.info('Generiere JWT Token...');
+    const options: SignOptions = { expiresIn };
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       jwtSecret,
-      { expiresIn }
+      options
     );
     logger.info('Login erfolgreich:', { userId: user.id, username: user.username });
 

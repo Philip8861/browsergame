@@ -426,11 +426,15 @@ export const cancelUpgrade = async (req: AuthRequest, res: Response): Promise<vo
       const newWood = (parseFloat(currentResources.wood) || 0) + (refund.wood || 0);
       const newStone = (parseFloat(currentResources.stone) || 0) + (refund.stone || 0);
 
+      const woodStr = String(newWood);
+      const stoneStr = String(newStone);
+      const villageIdStr = String(villageId);
+
       await client.query(
         process.env.DB_TYPE === 'sqlite'
           ? 'UPDATE resources SET wood = ?, stone = ?, last_updated = CURRENT_TIMESTAMP WHERE village_id = ?'
           : 'UPDATE resources SET wood = $1, stone = $2, last_updated = NOW() WHERE village_id = $3',
-        [String(newWood), String(newStone), villageId]
+        [woodStr, stoneStr, villageIdStr]
       );
 
       // Prüfe ob der abzubrechende Auftrag der letzte ist (späteste Finish-Zeit)

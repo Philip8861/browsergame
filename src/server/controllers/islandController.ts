@@ -6,7 +6,7 @@ import { AuthRequest } from '../middleware/auth';
 /**
  * Hole alle Spieler-Inseln
  */
-export const getIslands = async (req: Request, res: Response): Promise<void> => {
+export const getIslands = async (_req: Request, res: Response): Promise<void> => {
   try {
     // Hole alle Dörfer (Inseln) mit Benutzer-Informationen
     const result = await query(

@@ -61,7 +61,7 @@ export async function createBackup(_req: Request, res: Response): Promise<void> 
     });
 
     // Event-Handler für Archiv
-    archive.on('error', (err) => {
+    archive.on('error', (err: Error) => {
       logger.error('❌ Fehler beim Erstellen des ZIP-Archivs:', err);
       res.status(500).json({
         error: 'Fehler beim Erstellen des Backups',
