@@ -75,7 +75,7 @@ class WeatherTimeManager {
     }
     
     if (this.currentWeather.type === 'rainy') {
-      return { bonus: 50, description: 'Regen +50%' };
+      return { bonus: 50, description: 'Wasser +50%' };
     }
     
     return { bonus: 0, description: '' };
@@ -110,15 +110,13 @@ class WeatherTimeManager {
       weatherIcon.textContent = weather.icon;
     }
     
-    // Aktualisiere Wetter-Name mit Bonus-Info
+    // Wetter-Name ohne Bonus-Info
     if (weatherType) {
-      const waterBonus = this.getWaterBonus();
-      if (waterBonus.bonus > 0) {
-        weatherType.textContent = `${weather.name} ${waterBonus.description}`;
-      } else {
-        weatherType.textContent = weather.name;
-      }
+      weatherType.textContent = weather.name;
     }
+    
+    // Aktualisiere Wasser-Bonus-Anzeige separat
+    this.updateWaterBonusDisplay();
     
     if (weatherTimer) {
       weatherTimer.textContent = `${weather.remainingSeconds || 60}s`;
@@ -221,6 +219,9 @@ class WeatherTimeManager {
     
     // Aktualisiere Fischfang-Bonus-Anzeige
     this.updateFishingBonusDisplay();
+    
+    // Aktualisiere Wasser-Bonus-Anzeige
+    this.updateWaterBonusDisplay();
   }
 
   /**

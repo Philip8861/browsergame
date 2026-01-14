@@ -18,40 +18,44 @@ export interface WeatherData {
 
 /**
  * Wetter-Manager - Verwaltet das globale Wetter für alle Spieler
- * Das Wetter ändert sich alle 60 Sekunden zufällig
+ * Das Wetter wechselt im festen Zyklus: Sonne (30s) -> Sturm (30s) -> Regen (30s)
  */
 class WeatherManager {
   private currentWeather: WeatherType = 'sunny';
   private weatherStartTime: Date = new Date();
   private weatherInterval: NodeJS.Timeout | null = null;
   private weatherChangeCallbacks: Array<(weather: WeatherData) => void> = [];
+  private weatherCycle: WeatherType[] = ['sunny', 'stormy', 'rainy'];
+  private currentCycleIndex: number = 0;
 
   constructor() {
-    // Starte mit zufälligem Wetter
-    this.changeWeather();
+    // Starte mit Sonne
+    this.currentWeather = 'sunny';
+    this.currentCycleIndex = 0;
+    this.weatherStartTime = new Date();
     
-    // Ändere Wetter alle 60 Sekunden
+    // Ändere Wetter alle 30 Sekunden im festen Zyklus
     this.weatherInterval = setInterval(() => {
       this.changeWeather();
-    }, 60000); // 60 Sekunden
+    }, 30000); // 30 Sekunden
 
-    logger.info('🌤️ Wetter-Manager initialisiert');
+    logger.info('🌤️ Wetter-Manager initialisiert (Zyklus: Sonne -> Sturm -> Regen, je 30s)');
   }
 
   /**
-   * Ändere das Wetter zufällig
+   * Ändere das Wetter im festen Zyklus
    */
   private changeWeather(): void {
-    const weatherTypes: WeatherType[] = ['sunny', 'rainy', 'stormy'];
-    const randomIndex = Math.floor(Math.random() * weatherTypes.length);
-    const newWeather = weatherTypes[randomIndex];
+    // Wechsle zum nächsten Wetter im Zyklus
+    this.currentCycleIndex = (this.currentCycleIndex + 1) % this.weatherCycle.length;
+    const newWeather = this.weatherCycle[this.currentCycleIndex];
     
     this.currentWeather = newWeather;
     this.weatherStartTime = new Date();
     
     const weatherData = this.getCurrentWeather();
     
-    logger.info(`🌤️ Wetter geändert zu: ${weatherData.name}`);
+    logger.info(`🌤️ Wetter geändert zu: ${weatherData.name} (Zyklus-Position: ${this.currentCycleIndex + 1}/${this.weatherCycle.length})`);
     
     // Benachrichtige alle Callbacks
     this.weatherChangeCallbacks.forEach(callback => {
