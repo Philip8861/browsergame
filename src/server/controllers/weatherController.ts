@@ -9,14 +9,18 @@ import { logger } from '../utils/logger';
  */
 export const getWeather = async (_req: Request, res: Response): Promise<void> => {
   try {
+    logger.info('🌤️ Wetter-API aufgerufen');
     const weatherManager = getWeatherManager();
     const weather = weatherManager.getCurrentWeather();
     const remainingSeconds = weatherManager.getRemainingSeconds();
     
-    res.json({
+    const response = {
       ...weather,
       remainingSeconds,
-    });
+    };
+    
+    logger.info('🌤️ Wetter-Response:', response);
+    res.json(response);
   } catch (error) {
     logger.error('Fehler beim Abrufen des Wetters:', error);
     res.status(500).json({ 
