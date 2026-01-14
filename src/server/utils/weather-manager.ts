@@ -67,7 +67,6 @@ class WeatherManager {
    * Hole aktuelles Wetter
    */
   getCurrentWeather(): WeatherData {
-    const now = new Date();
     const expiresAt = new Date(this.weatherStartTime.getTime() + 60000); // 60 Sekunden
     
     const weatherConfig = {

@@ -155,10 +155,8 @@ process.on('uncaughtException', (error) => {
 const server = createServer(app);
 
 // WebSocket Server
-let globalWss: WebSocketServer | null = null;
 try {
   const wss = new WebSocketServer({ server, path: '/ws' });
-  globalWss = wss;
   setupWebSocket(wss);
   
   // Sende aktuelles Wetter an neue Verbindungen
