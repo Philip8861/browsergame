@@ -2133,6 +2133,15 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
+}
+
+.weather-type .water-bonus {
+  color: rgba(135, 206, 250, 1);
+  font-weight: 800;
+  text-shadow: 
+    0 0 10px rgba(135, 206, 250, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .weather-timer {

@@ -66,6 +66,22 @@ class WeatherTimeManager {
   }
 
   /**
+   * Berechne Wasser-Bonus basierend auf dem Wetter
+   * @returns {Object} { bonus: number, description: string }
+   */
+  getWaterBonus() {
+    if (!this.currentWeather) {
+      return { bonus: 0, description: '' };
+    }
+    
+    if (this.currentWeather.type === 'rainy') {
+      return { bonus: 50, description: 'Regen +50%' };
+    }
+    
+    return { bonus: 0, description: '' };
+  }
+
+  /**
    * Aktualisiere Wetter-Anzeige
    */
   updateWeatherDisplay(weather) {
@@ -94,8 +110,14 @@ class WeatherTimeManager {
       weatherIcon.textContent = weather.icon;
     }
     
+    // Aktualisiere Wetter-Name mit Bonus-Info
     if (weatherType) {
-      weatherType.textContent = weather.name;
+      const waterBonus = this.getWaterBonus();
+      if (waterBonus.bonus > 0) {
+        weatherType.textContent = `${weather.name} ${waterBonus.description}`;
+      } else {
+        weatherType.textContent = weather.name;
+      }
     }
     
     if (weatherTimer) {
@@ -315,6 +337,28 @@ export function getFishingBonus() {
     return { bonus: 0, description: 'Nacht: Fischfang normal' };
   }
   return weatherTimeManagerInstance.getFishingBonus();
+}
+
+/**
+ * Exportiere Funktion zum Abrufen des aktuellen Wasser-Bonus
+ * Kann von anderen Modulen verwendet werden
+ */
+export function getWaterBonus() {
+  if (!weatherTimeManagerInstance) {
+    return { bonus: 0, description: '' };
+  }
+  return weatherTimeManagerInstance.getWaterBonus();
+}
+
+/**
+ * Exportiere Funktion zum Abrufen des aktuellen Wetters
+ * Kann von anderen Modulen verwendet werden
+ */
+export function getCurrentWeather() {
+  if (!weatherTimeManagerInstance) {
+    return null;
+  }
+  return weatherTimeManagerInstance.currentWeather;
 }
 
 export default initWeatherTime;
