@@ -2,6 +2,8 @@
  * Wetter und Uhrzeit Manager
  * Verwaltet die Anzeige von Wetter und Uhrzeit
  */
+import { WS_BASE_URL } from './config.js';
+
 class WeatherTimeManager {
   constructor() {
     this.currentWeather = null;
@@ -262,12 +264,42 @@ class WeatherTimeManager {
   }
 
   /**
+   * Aktualisiere Wasser-Bonus-Anzeige
+   */
+  updateWaterBonusDisplay() {
+    const bonusInfo = this.getWaterBonus();
+    let bonusDisplay = document.getElementById('water-bonus-display');
+    
+    if (!bonusDisplay) {
+      // Erstelle Bonus-Anzeige falls nicht vorhanden
+      bonusDisplay = document.createElement('div');
+      bonusDisplay.id = 'water-bonus-display';
+      bonusDisplay.className = 'water-bonus-display';
+      const timeContainer = document.querySelector('.time-container');
+      if (timeContainer) {
+        timeContainer.appendChild(bonusDisplay);
+      } else {
+        console.warn('time-container nicht gefunden, kann Wasser-Bonus nicht anzeigen');
+        return;
+      }
+    }
+    
+    if (bonusInfo.bonus > 0) {
+      bonusDisplay.textContent = `Wasser +${bonusInfo.bonus}%`;
+      bonusDisplay.style.display = 'block';
+      bonusDisplay.classList.remove('bonus-positive', 'bonus-negative', 'bonus-normal');
+      bonusDisplay.classList.add('bonus-positive');
+    } else {
+      bonusDisplay.style.display = 'none';
+    }
+  }
+
+  /**
    * Verbinde mit WebSocket für Echtzeit-Wetter-Updates
    */
   connectWebSocket() {
     try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      const wsUrl = `${WS_BASE_URL}/ws`;
       
       this.ws = new WebSocket(wsUrl);
       

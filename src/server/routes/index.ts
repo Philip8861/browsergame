@@ -62,6 +62,15 @@ export function setupRoutes(app: Express): void {
       logger.error('❌ Fehler beim Laden der Weather Routes:', error);
     }
     
+    // Fishing Boat Routes
+    try {
+      const fishingBoatRoutes = require('./fishingBoatRoutes').default;
+      app.use('/api/villages', fishingBoatRoutes);
+      logger.info('✅ Fishing Boat Routes geladen');
+    } catch (error) {
+      logger.error('❌ Fehler beim Laden der Fishing Boat Routes:', error);
+    }
+    
     
     logger.info('✅ Alle Routes erfolgreich geladen');
   } catch (error) {

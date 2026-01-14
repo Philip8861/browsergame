@@ -517,10 +517,12 @@ class MenuManager {
         return;
       }
       
-      // Linker Klick - Pop-up entfernt, keine Aktion
+      // Linker Klick - Öffne Hafen-Pop-Up
       if (isFixed) {
         e.preventDefault();
         e.stopPropagation();
+        // Öffne Hafen-Modal
+        this.showHafenModal();
         return;
       }
       
@@ -675,6 +677,9 @@ class MenuManager {
       if (hafenIcon && hafenIconImg) {
         if (level >= 1) {
           hafenIcon.style.display = 'block';
+          
+          // Zeige Boot-Animation wenn Hafen Stufe 1+ vorhanden ist
+          await this.updateFishingBoatAnimation();
           
           // Wechsle Icon basierend auf Stufe
           // Stufe 1-2: Hafen_icon1.png, Stufe 3+: Hafen_icon2.png
@@ -1115,6 +1120,99 @@ class MenuManager {
     
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Zeige Hafen-Modal
+   */
+  async showHafenModal() {
+    const modal = document.getElementById('hafen-modal');
+    if (!modal) {
+      console.error('Hafen-Modal nicht gefunden!');
+      return;
+    }
+
+    try {
+      const currentIslandId = await this.getCurrentIslandIdAsync();
+      if (!currentIslandId) {
+        const { notificationManager } = await import('./notification.js');
+        notificationManager.error('Keine Insel ausgewählt');
+        return;
+      }
+
+      // Lade Fischerboot-Daten
+      const { api } = await import('./api.js');
+      const fishingBoats = await api.getFishingBoats(currentIslandId);
+      
+      // Aktualisiere Anzeige
+      const countEl = document.getElementById('fishing-boats-count');
+      const productionEl = document.getElementById('fishing-boats-production');
+      
+      if (countEl) {
+        countEl.textContent = fishingBoats.count || 0;
+      }
+      if (productionEl) {
+        productionEl.textContent = `+${fishingBoats.foodProductionPerHour || 0}`;
+      }
+
+      // Zeige Modal
+      modal.classList.remove('hidden');
+
+      // Event Listener für Schließen-Button
+      const closeBtn = document.getElementById('hafen-close');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          modal.classList.add('hidden');
+        };
+      }
+
+      // Event Listener für Backdrop
+      const backdrop = modal.querySelector('.hafen-backdrop');
+      if (backdrop) {
+        backdrop.onclick = () => {
+          modal.classList.add('hidden');
+        };
+      }
+
+      // Event Listener für Bauen-Button
+      const buildBtn = document.getElementById('build-fishing-boat-btn');
+      if (buildBtn) {
+        buildBtn.onclick = async () => {
+          await this.buildFishingBoat(currentIslandId);
+        };
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden des Hafen-Modals:', error);
+      const { notificationManager } = await import('./notification.js');
+      notificationManager.error('Fehler beim Laden des Hafens');
+    }
+  }
+
+  /**
+   * Baue ein Fischerboot
+   */
+  async buildFishingBoat(villageId) {
+    try {
+      const { api } = await import('./api.js');
+      const { notificationManager } = await import('./notification.js');
+      
+      const result = await api.buildFishingBoat(villageId);
+      
+      notificationManager.success(`Fischerboot gebaut! Nahrung/Stunde: +${result.fishingBoats.foodProductionPerHour}`);
+      
+      // Aktualisiere Anzeige
+      await this.showHafenModal();
+      
+      // Aktualisiere Ressourcen-Anzeige
+      await this.updateResourcesDisplay();
+      
+      // Aktualisiere Boot-Animation
+      await this.updateFishingBoatAnimation();
+    } catch (error) {
+      console.error('Fehler beim Bauen des Fischerboots:', error);
+      const { notificationManager } = await import('./notification.js');
+      notificationManager.error(error.message || 'Fehler beim Bauen des Fischerboots');
+    }
   }
 
   async showUpgradeModal(upgradeType) {
@@ -2684,13 +2782,26 @@ class MenuManager {
       const stoneRateEl = document.getElementById('resource-stone-rate');
       const waterRateEl = document.getElementById('resource-water-rate');
       const foodRateEl = document.getElementById('resource-food-rate');
-      const luxuryRateEl = document.getElementById('resource-luxury-rate');
       
-      if (woodRateEl) woodRateEl.textContent = `+${productionRate}`;
-      if (stoneRateEl) stoneRateEl.textContent = `+${productionRate}`;
-      if (waterRateEl) waterRateEl.textContent = `+${productionRate}`;
-      if (foodRateEl) foodRateEl.textContent = `+${productionRate}`;
-      if (luxuryRateEl) luxuryRateEl.textContent = `+${productionRate}`;
+      // Lade Fischerboot-Produktion für Nahrung
+      const currentIslandId = await this.getCurrentIslandIdAsync();
+      let foodProduction = 0;
+      if (currentIslandId) {
+        try {
+          const { api } = await import('./api.js');
+          const fishingBoats = await api.getFishingBoats(currentIslandId);
+          foodProduction = fishingBoats.foodProductionPerHour || 0;
+        } catch (error) {
+          console.warn('Konnte Fischerboot-Produktion nicht laden:', error);
+        }
+      }
+      
+      if (woodRateEl) woodRateEl.textContent = '+0';
+      if (stoneRateEl) stoneRateEl.textContent = '+0';
+      if (waterRateEl) waterRateEl.textContent = '+0';
+      if (foodRateEl) foodRateEl.textContent = foodProduction > 0 ? `+${foodProduction}` : '+0';
+      const luxuryRateEl = document.getElementById('resource-luxury-rate');
+      if (luxuryRateEl) luxuryRateEl.textContent = '+0';
       
       // Aktualisiere Bevölkerung (aus villageData)
       if (populationEl) {

@@ -177,6 +177,20 @@ export function initDatabase(): void {
     CREATE INDEX IF NOT EXISTS idx_servers_start_date ON servers(start_date);
   `);
 
+  // Fishing Boats Tabelle
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS fishing_boats (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      village_id INTEGER NOT NULL REFERENCES villages(id) ON DELETE CASCADE,
+      count INTEGER NOT NULL DEFAULT 0,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(village_id)
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_fishing_boats_village_id ON fishing_boats(village_id);
+  `);
+
   console.log('✅ SQLite Datenbank-Schema initialisiert');
 }
 

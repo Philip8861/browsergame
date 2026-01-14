@@ -1,6 +1,7 @@
 /**
  * API Client für REST-Kommunikation mit dem Backend
  */
+import { API_BASE_URL } from './config.js';
 
 /**
  * Hilfsfunktion: Hole aktuelle Insel-ID
@@ -42,7 +43,7 @@ export async function getCurrentIslandId() {
 
 class ApiClient {
   constructor() {
-    this.baseUrl = '/api';
+    this.baseUrl = API_BASE_URL;
     this.token = localStorage.getItem('authToken');
   }
 
@@ -202,6 +203,19 @@ class ApiClient {
    */
   async getWeather() {
     return this.request('/weather');
+  }
+
+  /**
+   * Fischerboot Endpoints
+   */
+  async getFishingBoats(villageId) {
+    return this.request(`/villages/${villageId}/fishing-boats`);
+  }
+
+  async buildFishingBoat(villageId) {
+    return this.request(`/villages/${villageId}/fishing-boats/build`, {
+      method: 'POST',
+    });
   }
 
   async updateResources(villageId, resources) {
