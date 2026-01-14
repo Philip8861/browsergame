@@ -57,6 +57,11 @@ class MapView {
     this.islandImage = null;
     this.islandLoaded = false;
     
+    // Nessi-Bild
+    this.nessiImage = null;
+    this.nessiLoaded = false;
+    this.nessiPosition = null; // {x, y} Position von Nessi
+    
     // Spieler-Inseln (Array von {x, y, playerId, username, villageName})
     this.playerIslands = [];
     
@@ -99,8 +104,14 @@ class MapView {
     // Lade Insel-Bild
     this.loadIslandImage();
     
+    // Lade Nessi-Bild
+    this.loadNessiImage();
+    
     // Lade Spieler-Inseln vom Server
     await this.loadPlayerIslands();
+    
+    // Platziere Nessi zufällig (ab 4. Insel)
+    this.placeNessi();
     
     // Zentriere Karte auf aktuellem Dorf
     await this.centerOnCurrentVillage();
@@ -172,6 +183,58 @@ class MapView {
     this.islandImage.src = '/assets/Insel.png';
   }
   
+  loadNessiImage() {
+    // Lade das Nessi-Bild
+    this.nessiImage = new Image();
+    this.nessiImage.onload = () => {
+      this.nessiLoaded = true;
+      if (this.canvas && this.ctx) {
+        this.updateView();
+      }
+    };
+    this.nessiImage.onerror = () => {
+      console.warn('Nessi-Bild konnte nicht geladen werden:', '/assets/Nessi.png');
+      this.nessiLoaded = false;
+    };
+    this.nessiImage.src = '/assets/Nessi.png';
+  }
+  
+  placeNessi() {
+    // Platziere Nessi nur ab der 4. Insel
+    if (this.playerIslands.length < 4) {
+      this.nessiPosition = null;
+      return;
+    }
+    
+    // Wenn Nessi bereits platziert wurde, nicht erneut platzieren
+    if (this.nessiPosition) {
+      return;
+    }
+    
+    // Wähle eine zufällige Insel aus (ab der 4. Insel)
+    const randomIndex = Math.floor(Math.random() * (this.playerIslands.length - 3)) + 3; // Index 3-6 (4. bis letzte Insel)
+    const targetIsland = this.playerIslands[randomIndex];
+    
+    // Platziere Nessi zufällig in der Nähe der ausgewählten Insel
+    // Entfernung: 2-5 Felder in zufälliger Richtung
+    const distance = 2 + Math.random() * 3; // 2-5 Felder
+    const angle = Math.random() * Math.PI * 2; // Zufälliger Winkel
+    
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+    
+    // Stelle sicher, dass Nessi innerhalb der Karten-Grenzen bleibt
+    const nessiX = Math.max(0, Math.min(this.fieldsX - 1, targetIsland.x + offsetX));
+    const nessiY = Math.max(0, Math.min(this.fieldsY - 1, targetIsland.y + offsetY));
+    
+    this.nessiPosition = {
+      x: nessiX,
+      y: nessiY
+    };
+    
+    console.log('🦕 Nessi platziert bei:', this.nessiPosition, 'in der Nähe von Insel:', targetIsland);
+  }
+  
   async loadPlayerIslands() {
     try {
       // Lade Spieler-Inseln vom Server
@@ -183,6 +246,11 @@ class MapView {
           villageId: island.villageId || island.id, // Stelle sicher, dass villageId vorhanden ist
           villageName: island.villageName || island.name || 'Unbenannte Insel' // Stelle sicher, dass villageName vorhanden ist
         }));
+        
+        // Platziere Nessi neu wenn sich die Anzahl der Inseln geändert hat
+        if (this.playerIslands.length >= 4 && !this.nessiPosition) {
+          this.placeNessi();
+        }
         
         // Aktualisiere selectedIsland falls gesetzt (z.B. nach Namensänderung)
         if (this.selectedIsland) {
@@ -1169,6 +1237,41 @@ class MapView {
     }
   }
   
+  drawNessi() {
+    if (!this.ctx || !this.nessiImage || !this.nessiLoaded || !this.nessiPosition) return;
+    if (this.viewportWidth === 0 || this.viewportHeight === 0) return;
+    
+    const fieldSize = this.fieldSize;
+    if (fieldSize === 0) return;
+    
+    // Nessi-Größe: etwas größer als eine Insel (120% der Feldgröße)
+    const nessiSize = fieldSize * 1.2;
+    
+    // Berechne Position im Canvas
+    const canvasX = (this.nessiPosition.x * fieldSize) - this.viewX;
+    const canvasY = (this.nessiPosition.y * fieldSize) - this.viewY;
+    
+    // Nur zeichnen wenn sichtbar
+    if (canvasX + nessiSize > 0 && canvasX < this.viewportWidth &&
+        canvasY + nessiSize > 0 && canvasY < this.viewportHeight) {
+      
+      // Zeichne Nessi zentriert
+      const offsetX = (fieldSize - nessiSize) / 2;
+      const offsetY = (fieldSize - nessiSize) / 2;
+      const nessiDrawX = canvasX + offsetX;
+      const nessiDrawY = canvasY + offsetY;
+      
+      // Zeichne Nessi
+      this.ctx.drawImage(
+        this.nessiImage,
+        nessiDrawX,
+        nessiDrawY,
+        nessiSize,
+        nessiSize
+      );
+    }
+  }
+  
   setupCanvas() {
     this.canvas = document.getElementById('map-viewport');
     if (!this.canvas) {
@@ -1631,6 +1734,11 @@ class MapView {
     // Zeichne Spieler-Inseln (immer sichtbar)
     if (this.islandLoaded && this.playerIslands.length > 0) {
       this.drawIslands();
+    }
+    
+    // Zeichne Nessi (ab 4. Insel)
+    if (this.nessiLoaded && this.nessiPosition) {
+      this.drawNessi();
     }
     
     // Leitlinien entfernt - nicht mehr zeichnen
