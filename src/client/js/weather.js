@@ -50,7 +50,7 @@ class WeatherTimeManager {
           type: 'sunny',
           name: 'Sonne',
           icon: '☀️',
-          remainingSeconds: 60,
+          remainingSeconds: 30,
         });
       }
     } catch (error) {

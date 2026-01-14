@@ -67,7 +67,7 @@ class WeatherManager {
    * Hole aktuelles Wetter
    */
   getCurrentWeather(): WeatherData {
-    const expiresAt = new Date(this.weatherStartTime.getTime() + 60000); // 60 Sekunden
+    const expiresAt = new Date(this.weatherStartTime.getTime() + 30000); // 30 Sekunden
     
     const weatherConfig = {
       sunny: { name: 'Sonne', icon: '☀️' },
@@ -108,7 +108,7 @@ class WeatherManager {
    */
   getRemainingSeconds(): number {
     const now = new Date();
-    const expiresAt = new Date(this.weatherStartTime.getTime() + 60000);
+    const expiresAt = new Date(this.weatherStartTime.getTime() + 30000); // 30 Sekunden
     const remaining = Math.max(0, Math.floor((expiresAt.getTime() - now.getTime()) / 1000));
     return remaining;
   }
