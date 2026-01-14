@@ -186,6 +186,13 @@ class ApiClient {
     return this.request(`/villages/${villageId}/resources`);
   }
 
+  /**
+   * Hole aktuelles Wetter (für alle Spieler gleich)
+   */
+  async getWeather() {
+    return this.request('/weather');
+  }
+
   async updateResources(villageId, resources) {
     return this.request(`/villages/${villageId}/resources`, {
       method: 'PUT',
