@@ -12,6 +12,8 @@ class WeatherTimeManager {
   }
 
   async init() {
+    console.log('🌤️ Initialisiere Wetter-Manager...');
+    
     // Lade initiales Wetter
     await this.loadWeather();
     
@@ -23,6 +25,8 @@ class WeatherTimeManager {
     
     // Starte Wetter-Timer-Updates
     this.startWeatherTimer();
+    
+    console.log('✅ Wetter-Manager initialisiert');
   }
 
   /**
@@ -30,16 +34,27 @@ class WeatherTimeManager {
    */
   async loadWeather() {
     try {
+      console.log('🌤️ Lade Wetter vom Server...');
       const { api } = await import('./api.js');
       const response = await api.request('/api/weather', {
         method: 'GET',
       });
       
+      console.log('🌤️ Wetter-Response erhalten:', response);
+      
       if (response) {
         this.updateWeatherDisplay(response);
+      } else {
+        console.warn('⚠️ Keine Wetter-Daten erhalten, verwende Fallback');
+        this.updateWeatherDisplay({
+          type: 'sunny',
+          name: 'Sonne',
+          icon: '☀️',
+          remainingSeconds: 60,
+        });
       }
     } catch (error) {
-      console.error('Fehler beim Laden des Wetters:', error);
+      console.error('❌ Fehler beim Laden des Wetters:', error);
       // Fallback: Zeige Sonne
       this.updateWeatherDisplay({
         type: 'sunny',
@@ -54,12 +69,26 @@ class WeatherTimeManager {
    * Aktualisiere Wetter-Anzeige
    */
   updateWeatherDisplay(weather) {
+    console.log('🌤️ Aktualisiere Wetter-Anzeige:', weather);
     this.currentWeather = weather;
     
     const weatherIcon = document.getElementById('weather-icon');
     const weatherType = document.getElementById('weather-type');
     const weatherTimer = document.getElementById('weather-timer');
     const weatherContainer = document.querySelector('.weather-container');
+    
+    if (!weatherIcon) {
+      console.warn('⚠️ weather-icon Element nicht gefunden');
+    }
+    if (!weatherType) {
+      console.warn('⚠️ weather-type Element nicht gefunden');
+    }
+    if (!weatherTimer) {
+      console.warn('⚠️ weather-timer Element nicht gefunden');
+    }
+    if (!weatherContainer) {
+      console.warn('⚠️ weather-container Element nicht gefunden');
+    }
     
     if (weatherIcon) {
       weatherIcon.textContent = weather.icon;
