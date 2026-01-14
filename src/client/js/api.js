@@ -110,9 +110,20 @@ class ApiClient {
         endpoint,
         method: options.method || 'GET',
         error: error.message,
+        details: error.details,
         stack: error.stack
       });
-      throw error;
+      
+      // Erstelle eine aussagekräftigere Fehlermeldung
+      let errorMessage = error.message || 'Unbekannter Fehler';
+      if (error.details && error.details !== error.message) {
+        errorMessage = `${errorMessage}: ${error.details}`;
+      }
+      
+      const enhancedError = new Error(errorMessage);
+      enhancedError.details = error.details;
+      enhancedError.stack = error.stack;
+      throw enhancedError;
     }
   }
 

@@ -155,7 +155,18 @@ class AuthManager {
       // Form zurücksetzen
       document.getElementById('login-form').reset();
     } catch (error) {
-      errorEl.textContent = error.message || 'Login fehlgeschlagen';
+      // Zeige detaillierte Fehlermeldung
+      let errorText = error.message || 'Login fehlgeschlagen';
+      if (error.details && error.details !== error.message) {
+        errorText = `${errorText}\n${error.details}`;
+      }
+      errorEl.textContent = errorText;
+      errorEl.style.display = 'block';
+      console.error('Login-Fehler Details:', {
+        message: error.message,
+        details: error.details,
+        stack: error.stack
+      });
     }
   }
 
