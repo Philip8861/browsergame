@@ -38,7 +38,7 @@ class WeatherTimeManager {
     try {
       console.log('🌤️ Lade Wetter vom Server...');
       const { api } = await import('./api.js');
-      const response = await api.request('/api/weather', {
+      const response = await api.request('/weather', {
         method: 'GET',
       });
       
