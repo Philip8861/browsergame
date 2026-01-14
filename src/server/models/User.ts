@@ -122,9 +122,16 @@ export class UserModel {
       const user = result.rows?.[0] || null;
       console.log('[UserModel] Benutzer gefunden (rows):', user);
       return user;
-    } catch (error) {
+    } catch (error: any) {
       console.error('[UserModel] Fehler beim Suchen nach Username:', error);
-      throw error;
+      console.error('[UserModel] Fehler-Message:', error?.message);
+      console.error('[UserModel] Fehler-Code:', error?.code);
+      console.error('[UserModel] Fehler-Stack:', error?.stack);
+      // Wirf einen aussagekräftigeren Fehler
+      const errorMessage = error?.message || 'Unbekannter Datenbankfehler';
+      const dbError = new Error(`Datenbankfehler beim Suchen nach Benutzer: ${errorMessage}`);
+      (dbError as any).originalError = error;
+      throw dbError;
     }
   }
 

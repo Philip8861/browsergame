@@ -214,11 +214,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     logger.error('Fehlerdetails:', errorMessage);
     logger.error('Fehler-Stack:', errorStack);
     
-    // Immer Details zurückgeben für besseres Debugging
+    // Immer Details zurückgeben für besseres Debugging (auch in Production)
     res.status(500).json({ 
       error: 'Login fehlgeschlagen',
       details: errorMessage,
-      ...(process.env.NODE_ENV === 'development' && { stack: errorStack })
+      message: errorMessage,
+      ...(errorStack && { stack: errorStack })
     });
   }
 };
