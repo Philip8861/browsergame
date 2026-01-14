@@ -2375,19 +2375,23 @@ class MenuManager {
       
       islandsList.innerHTML = islands.map(island => `
         <div class="island-card ${island.id === currentIslandId ? 'island-card-active' : ''}" data-island-id="${island.id}">
+          <div class="island-card-image-container">
+            <img src="/assets/Insel.png" alt="Insel" class="island-card-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="display: none; width: 120px; height: 120px; background: radial-gradient(circle, rgba(34, 139, 34, 0.8) 0%, rgba(210, 180, 140, 0.8) 50%, rgba(255, 228, 196, 0.9) 100%); border-radius: 50%; align-items: center; justify-content: center; font-size: 3rem; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));">🏝️</div>
+          </div>
           <div class="island-card-header">
             <div class="island-name-container">
               <input type="text" class="island-name-input" value="${island.name}" data-island-id="${island.id}" maxlength="50">
             </div>
-            ${island.id === currentIslandId ? '<span class="island-badge-active">Aktuell</span>' : ''}
+            ${island.id === currentIslandId ? '<span class="island-badge-active">⭐ Aktuell</span>' : ''}
           </div>
           <div class="island-card-info">
             <div class="island-info-item">
-              <span class="island-info-label">Feldnummer:</span>
+              <span class="island-info-label">📍 Feld:</span>
               <span class="island-info-value">${(island.y * 100) + island.x + 1}</span>
             </div>
             <div class="island-info-item">
-              <span class="island-info-label">Bevölkerung:</span>
+              <span class="island-info-label">👥 Bevölkerung:</span>
               <span class="island-info-value">${island.population}</span>
             </div>
             <div class="island-info-item">
@@ -2399,7 +2403,7 @@ class MenuManager {
             <div class="island-resources-loading">Lade Ressourcen...</div>
           </div>
           <button class="btn btn-primary island-switch-btn" data-island-id="${island.id}">
-            ${island.id === currentIslandId ? 'Aktuelle Insel' : 'Zu dieser Insel wechseln'}
+            ${island.id === currentIslandId ? '🏝️ Aktuelle Insel' : '🏖️ Zu dieser Insel wechseln'}
           </button>
         </div>
       `).join('');
