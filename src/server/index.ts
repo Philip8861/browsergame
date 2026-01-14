@@ -10,9 +10,18 @@ import { logger } from './utils/logger';
 import { migrateResourcesTable } from './utils/migrate-resources';
 import { migrateVillagesTable } from './utils/migrate-villages';
 import { runAutoMigrations } from './utils/auto-migrate';
+import { getWeatherManager } from './utils/weather-manager';
+import { broadcastWeather } from './websocket';
 
 // Lade Umgebungsvariablen
 dotenv.config();
+
+// Initialisiere Wetter-Manager beim Serverstart
+const weatherManager = getWeatherManager();
+// Registriere WebSocket-Broadcast für Wetter-Änderungen
+weatherManager.onWeatherChange((weather) => {
+  broadcastWeather(weather);
+});
 
 // Führe automatische Migrationen beim Serverstart aus
 // Warte kurz, damit die Datenbankverbindung initialisiert werden kann
@@ -146,9 +155,27 @@ process.on('uncaughtException', (error) => {
 const server = createServer(app);
 
 // WebSocket Server
+let globalWss: WebSocketServer | null = null;
 try {
   const wss = new WebSocketServer({ server, path: '/ws' });
+  globalWss = wss;
   setupWebSocket(wss);
+  
+  // Sende aktuelles Wetter an neue Verbindungen
+  wss.on('connection', (ws) => {
+    setTimeout(() => {
+      const weather = weatherManager.getCurrentWeather();
+      const remainingSeconds = weatherManager.getRemainingSeconds();
+      ws.send(JSON.stringify({
+        type: 'weather_update',
+        weather: {
+          ...weather,
+          remainingSeconds,
+        },
+      }));
+    }, 500);
+  });
+  
   logger.info('✅ WebSocket Server initialisiert');
 } catch (error) {
   logger.error('❌ Fehler beim Initialisieren des WebSocket Servers:', error);

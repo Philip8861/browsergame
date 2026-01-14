@@ -66,6 +66,15 @@ class GameApp {
       });
     }, 400);
 
+    // Initialisiere Wetter und Uhrzeit
+    setTimeout(() => {
+      import('./weather.js').then(module => {
+        module.initWeatherTime();
+      }).catch(err => {
+        console.error('Fehler beim Laden des Wetter-Managers:', err);
+      });
+    }, 500);
+
     // Starte Ressourcen-Updates
     this.startResourceUpdates();
 

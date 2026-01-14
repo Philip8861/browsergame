@@ -2041,6 +2041,164 @@
   width: 100%;
 }
 
+/* Wetter und Uhrzeit Widget (oben rechts) */
+.weather-time-widget {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 200px;
+}
+
+.weather-container {
+  background: linear-gradient(135deg, 
+    rgba(135, 206, 250, 0.9) 0%,
+    rgba(70, 130, 180, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.weather-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.weather-container.rainy {
+  background: linear-gradient(135deg, 
+    rgba(100, 149, 237, 0.9) 0%,
+    rgba(70, 130, 180, 0.85) 100%);
+}
+
+.weather-container.stormy {
+  background: linear-gradient(135deg, 
+    rgba(72, 61, 139, 0.9) 0%,
+    rgba(25, 25, 112, 0.85) 100%);
+  animation: stormPulse 2s ease-in-out infinite;
+}
+
+@keyframes stormPulse {
+  0%, 100% {
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 8px 32px rgba(100, 149, 237, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 0 20px rgba(100, 149, 237, 0.4);
+  }
+}
+
+.weather-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: weatherFloat 3s ease-in-out infinite;
+}
+
+@keyframes weatherFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.weather-type {
+  font-family: 'Kalam', cursive;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.weather-timer {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.time-container {
+  background: linear-gradient(135deg, 
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(30, 30, 30, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.time-display {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 
+    0 0 10px rgba(100, 200, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+.date-display {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive: Wetter-Widget auf kleineren Bildschirmen */
+@media (max-width: 768px) {
+  .weather-time-widget {
+    top: 10px;
+    right: 10px;
+    min-width: 160px;
+  }
+  
+  .weather-icon {
+    font-size: 2rem;
+  }
+  
+  .weather-type {
+    font-size: 0.95rem;
+  }
+  
+  .time-display {
+    font-size: 1.2rem;
+  }
+}
+
 /* Inseln ?bersicht */
 .islands-overview-section {
   margin-top: 2rem;

@@ -53,6 +53,15 @@ export function setupRoutes(app: Express): void {
       logger.error('❌ Fehler beim Laden der Leaderboard Routes:', error);
     }
     
+    // Weather Routes
+    try {
+      const weatherRoutes = require('./weatherRoutes').default;
+      app.use('/api/weather', weatherRoutes);
+      logger.info('✅ Weather Routes geladen');
+    } catch (error) {
+      logger.error('❌ Fehler beim Laden der Weather Routes:', error);
+    }
+    
     
     logger.info('✅ Alle Routes erfolgreich geladen');
   } catch (error) {

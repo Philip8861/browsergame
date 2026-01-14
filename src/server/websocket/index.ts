@@ -7,11 +7,31 @@ interface Client {
   villageId?: number;
 }
 
+// Globale Referenz für Wetter-Broadcast
+let globalWss: WebSocketServer | null = null;
+
+/**
+ * Broadcast Wetter-Update an alle Clients
+ */
+export function broadcastWeather(weather: any): void {
+  if (globalWss) {
+    globalWss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({
+          type: 'weather_update',
+          weather: weather,
+        }));
+      }
+    });
+  }
+}
+
 /**
  * WebSocket Server Setup
  * Bereit für Echtzeit-Updates (Ressourcen, Gebäude-Upgrades, etc.)
  */
 export function setupWebSocket(wss: WebSocketServer): void {
+  globalWss = wss;
   const clients = new Map<WebSocket, Client>();
 
   wss.on('connection', (ws: WebSocket) => {
