@@ -141,9 +141,39 @@ class WeatherTimeManager {
       clearInterval(this.timeTimer);
     }
     
+    // Aktualisiere jede Minute (da keine Sekunden angezeigt werden)
     this.timeTimer = setInterval(() => {
       this.updateTime();
-    }, 1000);
+    }, 60000); // 60 Sekunden = 1 Minute
+  }
+
+  /**
+   * Berechne Fischfang-Bonus basierend auf der aktuellen Uhrzeit
+   * @returns {Object} { bonus: number, description: string }
+   */
+  getFishingBonus() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+    
+    // 06:00 - 09:00: 30% mehr
+    if (totalMinutes >= 360 && totalMinutes < 540) {
+      return { bonus: 30, description: 'Morgens: Fischfang +30%' };
+    }
+    
+    // 09:00 - 18:00: 20% weniger
+    if (totalMinutes >= 540 && totalMinutes < 1080) {
+      return { bonus: -20, description: 'Mittags: Fischfang -20%' };
+    }
+    
+    // 18:00 - 22:00: 30% mehr
+    if (totalMinutes >= 1080 && totalMinutes < 1320) {
+      return { bonus: 30, description: 'Abends: Fischfang +30%' };
+    }
+    
+    // 22:00 - 05:59: Normal (0%)
+    return { bonus: 0, description: 'Nacht: Fischfang normal' };
   }
 
   /**
@@ -165,6 +195,46 @@ class WeatherTimeManager {
     const dateDisplay = document.getElementById('date-display');
     if (dateDisplay) {
       dateDisplay.style.display = 'none';
+    }
+    
+    // Aktualisiere Fischfang-Bonus-Anzeige
+    this.updateFishingBonusDisplay();
+  }
+
+  /**
+   * Aktualisiere Fischfang-Bonus-Anzeige
+   */
+  updateFishingBonusDisplay() {
+    const bonusInfo = this.getFishingBonus();
+    let bonusDisplay = document.getElementById('fishing-bonus-display');
+    
+    if (!bonusDisplay) {
+      // Erstelle Bonus-Anzeige falls nicht vorhanden
+      bonusDisplay = document.createElement('div');
+      bonusDisplay.id = 'fishing-bonus-display';
+      bonusDisplay.className = 'fishing-bonus-display';
+      const timeContainer = document.querySelector('.time-container');
+      if (timeContainer) {
+        timeContainer.appendChild(bonusDisplay);
+      } else {
+        console.warn('time-container nicht gefunden, kann Bonus nicht anzeigen');
+        return;
+      }
+    }
+    
+    // Setze Text und Stil basierend auf Bonus
+    bonusDisplay.textContent = bonusInfo.description;
+    
+    // Entferne alte Klassen
+    bonusDisplay.classList.remove('bonus-positive', 'bonus-negative', 'bonus-normal');
+    
+    // Füge entsprechende Klasse hinzu
+    if (bonusInfo.bonus > 0) {
+      bonusDisplay.classList.add('bonus-positive');
+    } else if (bonusInfo.bonus < 0) {
+      bonusDisplay.classList.add('bonus-negative');
+    } else {
+      bonusDisplay.classList.add('bonus-normal');
     }
   }
 
@@ -234,6 +304,17 @@ export function initWeatherTime() {
     weatherTimeManagerInstance = new WeatherTimeManager();
   }
   return weatherTimeManagerInstance;
+}
+
+/**
+ * Exportiere Funktion zum Abrufen des aktuellen Fischfang-Bonus
+ * Kann von anderen Modulen verwendet werden
+ */
+export function getFishingBonus() {
+  if (!weatherTimeManagerInstance) {
+    return { bonus: 0, description: 'Nacht: Fischfang normal' };
+  }
+  return weatherTimeManagerInstance.getFishingBonus();
 }
 
 export default initWeatherTime;
