@@ -152,24 +152,19 @@ class WeatherTimeManager {
   updateTime() {
     const now = new Date();
     
-    // Zeit
+    // Zeit (ohne Sekunden)
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
     
     const timeDisplay = document.getElementById('time-display');
     if (timeDisplay) {
-      timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+      timeDisplay.textContent = `${hours}:${minutes}`;
     }
     
-    // Datum
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = now.getFullYear();
-    
+    // Datum verstecken
     const dateDisplay = document.getElementById('date-display');
     if (dateDisplay) {
-      dateDisplay.textContent = `${day}.${month}.${year}`;
+      dateDisplay.style.display = 'none';
     }
   }
 
